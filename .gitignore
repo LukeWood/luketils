@@ -1,2 +1,4 @@
 luketils.egg-info/
-luketils/__pycache__/
+__pycache__/
+build/
+dist/
