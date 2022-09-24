@@ -57,17 +57,24 @@ def draw_bounding_boxes(
     class_mapping = class_mapping or {}
     result = []
 
+    if len(images.shape) != 4:
+        raise ValueError(
+            "Images must be a batched np-like with elements of shape "
+            "(height, width, 3)"
+        )
+
     for i in range(images.shape[0]):
         bounding_box_batch = bounding_boxes[i]
-        image = images[i]
+        image = utils.to_numpy(images[i]).astype('uint8')
         for b_id in range(bounding_box_batch.shape[0]):
             x, y, x2, y2, class_id = bounding_box_batch[b_id][:5].astype(int)
 
             if class_id == -1:
                 continue
+            # force conversion back to contigous array
+            x, y, x2, y2 = int(x), int(y), int(x2), int(y2)
             cv2.rectangle(image, (x, y), (x2, y2), color, thickness)
             class_id = int(class_id)
-
             if class_id in class_mapping:
                 label = class_mapping[class_id]
                 cv2.putText(
