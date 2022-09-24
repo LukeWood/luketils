@@ -65,7 +65,6 @@ def draw_bounding_boxes(
 
             if class_id == -1:
                 continue
-
             cv2.rectangle(image, (x, y), (x2, y2), color, thickness)
             class_id = int(class_id)
 
