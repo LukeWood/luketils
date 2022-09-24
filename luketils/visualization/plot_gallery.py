@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 
-def plot_gallery(images, value_range, rows=3, columns=3, scale=2, path=None, show=None):
+def plot_gallery(images, value_range, rows=3, columns=3, scale=2, path=None, show=None, cols=None):
     """gallery_show shows a gallery of images.
 
     Args:
@@ -14,6 +14,7 @@ def plot_gallery(images, value_range, rows=3, columns=3, scale=2, path=None, sho
         scale: how large to scale the images in the gallery
         path: (Optional) path to save the resulting gallery to.
         show: (Optional) whether or not to show the gallery of images.
+        cols: (Optional) alias for columns
     """
     if path is None and show is None:
         # Default to showing the image
@@ -28,6 +29,8 @@ def plot_gallery(images, value_range, rows=3, columns=3, scale=2, path=None, sho
     plt.subplots_adjust(wspace=0, hspace=0)
     plt.margins(x=0, y=0)
     plt.axis("off")
+
+    columns = cols if cols is not None else columns
 
     images = keras_cv.utils.transform_value_range(
         images, original_range=value_range, target_range=(0, 255)
