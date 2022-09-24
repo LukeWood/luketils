@@ -8,27 +8,27 @@ train_ds = train_ds.map(lambda sample: (sample["images"], sample["bounding_boxes
 images, boxes = next(iter(train_ds.take(1)))
 
 class_ids = [
-    'Aeroplane',
-    'Bicycle',
-    'Bird',
-    'Boat',
-    'Bottle',
-    'Bus',
-    'Car',
-    'Cat',
-    'Chair',
-    'Cow',
-    'Dining Table',
-    'Dog',
-    'Horse',
-    'Motorbike',
-    'Person',
-    'Potted Plant',
-    'Sheep',
-    'Sofa',
-    'Train',
-    'Tvmonitor',
-    'Total'
+    "Aeroplane",
+    "Bicycle",
+    "Bird",
+    "Boat",
+    "Bottle",
+    "Bus",
+    "Car",
+    "Cat",
+    "Chair",
+    "Cow",
+    "Dining Table",
+    "Dog",
+    "Horse",
+    "Motorbike",
+    "Person",
+    "Potted Plant",
+    "Sheep",
+    "Sofa",
+    "Train",
+    "Tvmonitor",
+    "Total",
 ]
 class_mapping = dict(zip(range(len(class_ids)), class_ids))
 
@@ -43,5 +43,5 @@ luketils.visualization.plot_bounding_box_gallery(
     show=True,
     thickness=4,
     font_scale=1,
-    class_mapping=class_mapping
+    class_mapping=class_mapping,
 )

@@ -14,7 +14,7 @@ def plot_bounding_box_gallery(
     y_true=None,
     y_pred=None,
     thickness=2,
-    font_scale=10,
+    font_scale=1.0,
     text_thickness=None,
     class_mapping=None,
     **kwargs
