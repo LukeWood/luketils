@@ -21,6 +21,8 @@ def plot_bounding_box_gallery(
 ):
     """plots a gallery of images with corresponding bounding box annotations
 
+    !Example bounding box gallery](https://i.imgur.com/Fy7kMnP.png)
+
     Args:
         images: a Tensor or NumPy array containing images to show in the gallery.
         value_range: value range of the images.
