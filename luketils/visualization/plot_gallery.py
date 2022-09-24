@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 
-def plot_gallery(images, value_range, rows=3, columns=3, scale=2, path=None, show=None, cols=None):
+def plot_gallery(
+    images, value_range, rows=3, columns=3, scale=2, path=None, show=None, cols=None
+):
     """gallery_show shows a gallery of images.
 
     Args:

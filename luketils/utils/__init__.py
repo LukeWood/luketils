@@ -1,10 +1,6 @@
 import os
 from datetime import datetime
 
-def ensure_exists(path):
-    """ensure a nested directory exists."""
-     os.makedirs(path, exist_ok=True)
-
-def experiment_name(base):
-    now = datetime.now()
-    return f"{base}-{now.strftime('%m/%d/%y-%H:%M%S')}"
+from luketils.utils.to_numpy import to_numpy
+from luketils.utils.experiment_name import experiment_name
+from luketils.utils.ensure_exists import ensure_exists
