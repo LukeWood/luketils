@@ -41,7 +41,7 @@ def plot_gallery(
 
     #3fig, axes = plt.subplots(nrows=rows, ncols=columns, figsize=(8, 8))
     #fig.tight_layout() # Or equivalently,  "plt.tight_layout()"
-    fig = plt.figure(figsize=(rows * scale, columns * scale))
+    fig = plt.figure(figsize=(columns * scale, rows * scale))
     fig.tight_layout()  # Or equivalently,  "plt.tight_layout()"
     plt.subplots_adjust(wspace=0, hspace=0)
     plt.margins(x=0, y=0)
