@@ -9,7 +9,7 @@ def plot_bounding_box_gallery(
     images,
     value_range,
     bounding_box_format,
-    pred_color=(255, 255, 0),
+    pred_color=(255, 128, 0),
     true_color=(0, 255, 255),
     y_true=None,
     y_pred=None,
@@ -56,18 +56,19 @@ def plot_bounding_box_gallery(
         text_thickness=text_thickness,
         font_scale=font_scale,
     )
-    if y_pred is not None:
-        plotted_images = draw_fn(
-            plotted_images,
-            y_pred,
-            pred_color,
-        )
 
     if y_true is not None:
         plotted_images = draw_fn(
             plotted_images,
             y_true,
             true_color,
+        )
+    
+    if y_pred is not None:
+        plotted_images = draw_fn(
+            plotted_images,
+            y_pred,
+            pred_color,
         )
 
     plot_gallery(plotted_images, value_range, **kwargs)
