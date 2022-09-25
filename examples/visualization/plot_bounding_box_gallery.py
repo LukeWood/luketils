@@ -40,7 +40,7 @@ luketils.visualization.plot_bounding_box_gallery(
     scale=4,
     rows=2,
     cols=2,
-    show=True,
+    path="gallery.png",
     thickness=4,
     font_scale=1,
     class_mapping=class_mapping,
