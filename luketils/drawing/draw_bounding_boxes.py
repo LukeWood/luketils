@@ -65,7 +65,7 @@ def draw_bounding_boxes(
 
     for i in range(images.shape[0]):
         bounding_box_batch = bounding_boxes[i]
-        image = utils.to_numpy(images[i]).astype('uint8')
+        image = utils.to_numpy(images[i]).astype("uint8")
         for b_id in range(bounding_box_batch.shape[0]):
             x, y, x2, y2, class_id = bounding_box_batch[b_id][:5].astype(int)
 

@@ -39,8 +39,8 @@ def plot_gallery(
             "plot_gallery() expects either `path` to be set, or `show` " "to be true."
         )
 
-    #3fig, axes = plt.subplots(nrows=rows, ncols=columns, figsize=(8, 8))
-    #fig.tight_layout() # Or equivalently,  "plt.tight_layout()"
+    # 3fig, axes = plt.subplots(nrows=rows, ncols=columns, figsize=(8, 8))
+    # fig.tight_layout() # Or equivalently,  "plt.tight_layout()"
     fig = plt.figure(figsize=(columns * scale, rows * scale))
     fig.tight_layout()  # Or equivalently,  "plt.tight_layout()"
     plt.subplots_adjust(wspace=0, hspace=0)

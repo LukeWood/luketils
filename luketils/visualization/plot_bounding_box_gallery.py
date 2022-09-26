@@ -63,7 +63,7 @@ def plot_bounding_box_gallery(
             y_true,
             true_color,
         )
-    
+
     if y_pred is not None:
         plotted_images = draw_fn(
             plotted_images,
