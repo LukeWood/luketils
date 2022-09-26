@@ -17,6 +17,8 @@ def plot_bounding_box_gallery(
     font_scale=1.0,
     text_thickness=None,
     class_mapping=None,
+    ground_truth_mapping=None,
+    prediction_mapping=None,
     **kwargs
 ):
     """plots a gallery of images with corresponding bounding box annotations
@@ -36,12 +38,19 @@ def plot_bounding_box_gallery(
         true_color: three element tuple representing the color to use for plotting
             true bounding boxes.
         class_mapping: (Optional) class mapping from class IDs to strings
+        ground_truth_mapping:  (Optional) class mapping from class IDs to strings,
+            defaults to `class_mapping`
+        prediction_mapping:  (Optional) class mapping from class IDs to strings,
+            defaults to `class_mapping`
         thickness: (Optional) thickness for the box and text labels.  Defaults to 2.
         text_thickness: (Optional) the thickness for the text, defaults to `1.0`.
         font_scale: (Optional) font size to draw bounding boxes in.
         kwargs: keyword arguments to propagate to
             `keras_cv.visualization.gallery_show()`.
     """
+    prediction_mapping = prediction_mapping or class_mapping
+    ground_truth_mapping = ground_truth_mapping or class_mapping
+
     images = utils.to_numpy(images)
     y_true = utils.to_numpy(y_true)
     y_pred = utils.to_numpy(y_pred)
@@ -51,7 +60,6 @@ def plot_bounding_box_gallery(
     draw_fn = functools.partial(
         drawing.draw_bounding_boxes,
         bounding_box_format=bounding_box_format,
-        class_mapping=class_mapping,
         thickness=thickness,
         text_thickness=text_thickness,
         font_scale=font_scale,
@@ -59,16 +67,12 @@ def plot_bounding_box_gallery(
 
     if y_true is not None:
         plotted_images = draw_fn(
-            plotted_images,
-            y_true,
-            true_color,
+            plotted_images, y_true, true_color, class_mapping=ground_truth_mapping
         )
 
     if y_pred is not None:
         plotted_images = draw_fn(
-            plotted_images,
-            y_pred,
-            pred_color,
+            plotted_images, y_pred, pred_color, class_mapping=prediction_mapping
         )
 
     plot_gallery(plotted_images, value_range, **kwargs)

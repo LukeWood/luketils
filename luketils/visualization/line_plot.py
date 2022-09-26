@@ -9,6 +9,8 @@ def line_plot(
     ylabel=None,
     show=None,
     path=None,
+    transparent=True,
+    dpi=60,
     palette="mako_r",
 ):
     """Produces a line plot based on a dictionary of metrics and labels."""
