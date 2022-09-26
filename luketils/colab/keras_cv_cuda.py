@@ -2,6 +2,7 @@ import subprocess
 
 
 def keras_cv_cuda():
+    """Update the CUDA kernel in your Colab environment to support running KerasCV."""
     subprocess.run(
         [
             "apt",
