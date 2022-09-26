@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 def line_plot(
@@ -13,6 +12,8 @@ def line_plot(
     palette="mako_r",
 ):
     """Produces a line plot based on a dictionary of metrics and labels."""
+    import seaborn as sns
+
     if show and path is not None:
         raise ValueError("Expected either `show` or `path` to be set, but not both.")
     if path is None and show is None:
@@ -20,7 +21,7 @@ def line_plot(
     palette = sns.color_palette("mako_r", len(data.keys()))
 
     sns.lineplot(data=data, palette=palette)
-    plt.legend(list(metrics.keys()))
+    plt.legend(list(data.keys()))
 
     if xlabel:
         plt.xlabel(xlabel)
