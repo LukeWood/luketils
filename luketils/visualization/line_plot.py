@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 def line_plot(
     data,
     title=None,
-    legend=None,
+    legend='auto',
     xlabel=None,
     ylabel=None,
     show=None,
@@ -21,8 +21,8 @@ def line_plot(
         show = True
     palette = sns.color_palette("mako_r", len(data.keys()))
 
-    sns.lineplot(data=data, palette=palette)
-    plt.legend(list(data.keys()))
+    sns.lineplot(data=data, palette=palette, legend=legend)
+    # plt.legend(list(data.keys()))
 
     if xlabel:
         plt.xlabel(xlabel)
