@@ -46,5 +46,4 @@ luketils.visualization.plot_bounding_box_gallery(
     font_scale=1,
     legend=True,
     class_mapping=class_mapping,
-    path="test.png",
 )

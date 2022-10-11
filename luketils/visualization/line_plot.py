@@ -13,7 +13,6 @@ def line_plot(
     dpi=60,
     palette="mako_r",
 ):
-    """Produces a line plot based on a dictionary of metrics and labels."""
     import seaborn as sns
 
     if show and path is not None:

@@ -50,7 +50,7 @@ def plot_gallery(
     plt.axis("off")
 
     if legend_handles is not None:
-        fig.legend(handles=legend_handles)
+        fig.legend(handles=legend_handles, loc="lower center")
 
     images = keras_cv.utils.transform_value_range(
         images, original_range=value_range, target_range=(0, 255)
