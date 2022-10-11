@@ -14,6 +14,7 @@ def plot_gallery(
     cols=None,
     transparent=True,
     dpi=60,
+    legend_handles=None,
 ):
     """gallery_show shows a gallery of images.
 
@@ -29,6 +30,9 @@ def plot_gallery(
         transparent: (Optional) whether or not to give the image a transparent
             background.  Defaults to True.
         dpi: (Optional) the dpi to pass to matplotlib.savefig().  Defaults to `60`.
+        legend_handles: (Optional) matplotlib.patches List of legend handles.
+            I.e. passing: `[patches.Patch(color='red', label='mylabel')]` will produce
+            a legend with a single red patch and the label 'mylabel'.
     """
     columns = cols if cols is not None else columns
     if path is None and show is None:
@@ -46,6 +50,9 @@ def plot_gallery(
     plt.subplots_adjust(wspace=0, hspace=0)
     plt.margins(x=0, y=0)
     plt.axis("off")
+
+    if legend_handles is not None:
+        plt.legend(handles=legend_handles)
 
     images = keras_cv.utils.transform_value_range(
         images, original_range=value_range, target_range=(0, 255)

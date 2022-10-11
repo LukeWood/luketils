@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import keras_cv
-import tensorflow as tf
 import cv2
-from luketils import utils
+import keras_cv
 import numpy as np
+import tensorflow as tf
+
+from luketils import utils
 
 
 def draw_bounding_boxes(
@@ -46,7 +47,7 @@ def draw_bounding_boxes(
     Returns:
         images with bounding boxes plotted on top of them
     """
-    bounding_boxes = keras_cv.bounding_box.convert_format(
+    bounding_boxes = keras_cv.data.bounding_box.convert_format(
         bounding_boxes, source=bounding_box_format, target="xyxy", images=images
     )
     text_thickness = text_thickness or thickness

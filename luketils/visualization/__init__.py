@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from luketils.visualization.line_plot import line_plot
 from luketils.visualization.plot_bounding_box_gallery import plot_bounding_box_gallery
 from luketils.visualization.plot_gallery import plot_gallery
-from luketils.visualization.line_plot import line_plot

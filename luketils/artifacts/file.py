@@ -1,4 +1,5 @@
 import contextlib
+
 from luketils.artifacts.base import get_base
 from luketils.artifacts.collection import add_artifact
 
