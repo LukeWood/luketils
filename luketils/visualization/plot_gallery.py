@@ -43,8 +43,6 @@ def plot_gallery(
             "plot_gallery() expects either `path` to be set, or `show` " "to be true."
         )
 
-    # 3fig, axes = plt.subplots(nrows=rows, ncols=columns, figsize=(8, 8))
-    # fig.tight_layout() # Or equivalently,  "plt.tight_layout()"
     fig = plt.figure(figsize=(columns * scale, rows * scale))
     fig.tight_layout()  # Or equivalently,  "plt.tight_layout()"
     plt.subplots_adjust(wspace=0, hspace=0)
@@ -52,7 +50,7 @@ def plot_gallery(
     plt.axis("off")
 
     if legend_handles is not None:
-        plt.legend(handles=legend_handles)
+        fig.legend(handles=legend_handles)
 
     images = keras_cv.utils.transform_value_range(
         images, original_range=value_range, target_range=(0, 255)

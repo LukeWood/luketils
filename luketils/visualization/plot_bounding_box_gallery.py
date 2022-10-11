@@ -1,6 +1,7 @@
 import functools
 
 import keras_cv
+import numpy as np
 from matplotlib import patches
 
 from luketils import drawing
@@ -86,11 +87,11 @@ def plot_bounding_box_gallery(
         if legend_handles:
             raise ValueError(
                 "Only pass `legend` OR `legend_handles` to "
-                "`plot_bounding_box_gallery()`."
+                "`luketils.visualization.plot_bounding_box_gallery()`."
             )
         legend_handles = [
-            patches.Patch(color=true_color, label="Ground Truth"),
-            patches.Patch(color=pred_color, label="Prediction"),
+            patches.Patch(color=np.array(true_color) / 255.0, label="Ground Truth"),
+            patches.Patch(color=np.array(pred_color) / 255.0, label="Prediction"),
         ]
 
-    plot_gallery(plotted_images, value_range, **kwargs)
+    plot_gallery(plotted_images, value_range, legend_handles=legend_handles, **kwargs)

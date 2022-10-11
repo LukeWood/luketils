@@ -33,30 +33,18 @@ class_ids = [
 ]
 class_mapping = dict(zip(range(len(class_ids)), class_ids))
 
-luketils.visualization.plot_bounding_box_gallery(
-    images,
-    value_range=(0, 255),
-    bounding_box_format="xywh",
-    y_true=boxes,
-    scale=4,
-    rows=2,
-    cols=2,
-    true_color=(128, 128, 255),
-    thickness=4,
-    font_scale=1,
-    class_mapping=class_mapping,
-)
-
 # same works for y_pred
 luketils.visualization.plot_bounding_box_gallery(
     images,
     value_range=(0, 255),
     bounding_box_format="xywh",
     y_pred=boxes,
-    scale=4,
+    scale=3,
     rows=2,
     cols=2,
     thickness=4,
     font_scale=1,
+    legend=True,
     class_mapping=class_mapping,
+    path="test.png",
 )

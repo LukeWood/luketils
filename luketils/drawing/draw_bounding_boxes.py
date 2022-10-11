@@ -47,7 +47,7 @@ def draw_bounding_boxes(
     Returns:
         images with bounding boxes plotted on top of them
     """
-    bounding_boxes = keras_cv.data.bounding_box.convert_format(
+    bounding_boxes = keras_cv.bounding_box.convert_format(
         bounding_boxes, source=bounding_box_format, target="xyxy", images=images
     )
     text_thickness = text_thickness or thickness
