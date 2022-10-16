@@ -25,7 +25,7 @@ def plot_latents(
 
     Usage:
     ```python
-    model = keras.Sequential(
+    encoder = keras.Sequential(
         [
             keras.Input(shape=input_shape),
             layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
@@ -35,16 +35,20 @@ def plot_latents(
             layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
             layers.MaxPooling2D(pool_size=(2, 2)),
             layers.Flatten(),
-            layers.Dense(10)
         ],
     )
+    model = keras.Sequential([encoder, layers.Dense(10)])
     model.compile(loss='categorical_crossentropy', optimizer='adam')
     (x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
     y_test = y_test.astype("int32")
 
     model.fit(x_train, y_train, epochs=10)
+
+    # Transform to latent space
+    latents = encoder.predict(x_test)
+    
     labels = {x: x for x in range(10)} # TODO(lukewood): replace with real labels
-    luketils.visualization.plot_latents(x_test, y_test, labels=labels, show=True)
+    luketils.visualization.plot_latents(latents, y_test, labels=labels, show=True)
     ```
 
     Args:
