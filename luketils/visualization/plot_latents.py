@@ -46,7 +46,7 @@ def plot_latents(
 
     # Transform to latent space
     latents = encoder.predict(x_test)
-    
+
     labels = {x: x for x in range(10)} # TODO(lukewood): replace with real labels
     luketils.visualization.plot_latents(latents, y_test, labels=labels, show=True)
     ```

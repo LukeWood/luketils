@@ -33,7 +33,7 @@ Then we construct the actual model we will use to perform training:
 """
 
 model = keras.Sequential([encoder, layers.Dense(10)])
-model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
+model.compile(loss="sparse_categorical_crossentropy", optimizer="adam")
 
 """
 and finally run `model.fit()`:
@@ -48,10 +48,12 @@ Lets see how the latent space is organized!
 # Transform to latent space
 latents = encoder.predict(x_test)
 
-labels = {x: x for x in range(10)} # TODO(lukewood): replace with real labels
+labels = {x: x for x in range(10)}  # TODO(lukewood): replace with real labels
 luketils.visualization.plot_latents(latents, y_test, labels=labels, show=True)
 
 """
 `plot_latents()` also supports 2D PCA for the weak hearted:
 """
-luketils.visualization.plot_latents(latents, y_test, labels=labels, dimensions=2, show=True)
+luketils.visualization.plot_latents(
+    latents, y_test, labels=labels, dimensions=2, show=True
+)
