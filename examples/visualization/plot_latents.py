@@ -1,5 +1,6 @@
-import luketils
 import numpy as np
+
+import luketils
 
 n = 1000
 y = np.random.choice([0, 1, 2, 3, 4, 5], size=(n,))

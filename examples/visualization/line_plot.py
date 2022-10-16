@@ -1,5 +1,6 @@
-from luketils import visualization
 import numpy as np
+
+from luketils import visualization
 
 metrics_to_plot = {
     "Train Box Loss": np.array(range(30)),

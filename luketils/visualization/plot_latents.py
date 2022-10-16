@@ -1,6 +1,8 @@
-from luketils.utils.to_numpy import to_numpy
-from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
+from luketils.utils.to_numpy import to_numpy
+
 
 # TODO(lukewood): support TSNE.
 def plot_latents(
@@ -123,9 +125,11 @@ def plot_latents(
     for i in labels.keys():
         indices = y == i
         if dimensions == 2:
-            ax.scatter(x[indices, 0],  x[indices, 1], label=str(labels[i]))
+            ax.scatter(x[indices, 0], x[indices, 1], label=str(labels[i]))
         if dimensions == 3:
-            ax.scatter(x[indices, 0],  x[indices, 1], x[indices, 2], label=str(labels[i]))
+            ax.scatter(
+                x[indices, 0], x[indices, 1], x[indices, 2], label=str(labels[i])
+            )
     plt.legend(loc=legend_location)
 
     if title is not None:
