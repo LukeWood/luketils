@@ -1,9 +1,9 @@
 """
-Title: Using KerasCV COCO Metrics
-Author: [lukewood](https://twitter.com/luke_wood_ml)
-Date created: 2022/04/13
-Last modified: 2022/04/13
-Description: Use KerasCV COCO metrics to evaluate object detection models.
+Title: Plot a bounding box gallery
+Author: [lukewood](https://lukewood.xyz)
+Date created: 2022/10/16
+Last modified: 2022/10/16
+Description: Visualize ground truth and predicted bounding boxes for a given dataset.
 """
 
 """

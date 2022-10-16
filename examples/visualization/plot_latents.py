@@ -1,7 +1,15 @@
 """
+Title: Visualize your model's latent representation
+Author: [lukewood](https://lukewood.xyz)
+Date created: 2022/10/16
+Last modified: 2022/10/16
+Description: Visualize your models latent representation of using `luketils`.
+"""
+
+"""
 `luketils.visualization.plot_latents()` is probably my favorite visualization technique
 in all of `luketils`.  `plot_latents()` allows you to visualize high dimensional spaces
-in only a few lines of code!
+in only a few lines of code.
 
 This can provide unique insights into your model's internal structure:
 """
