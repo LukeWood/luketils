@@ -40,8 +40,7 @@ and finally run `model.fit()`:
 """
 (x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
 x_train, x_test = np.expand_dims(x_train, axis=-1), np.expand_dims(x_test, axis=-1)
-print(x_train.shape)
-input()
+x_train, x_test = x_train.astype(float)/255.0, x_test.astype(float)/255.0
 model.fit(x_train, y_train, batch_size=64, epochs=10)
 
 """
