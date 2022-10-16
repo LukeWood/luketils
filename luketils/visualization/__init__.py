@@ -15,3 +15,4 @@
 from luketils.visualization.line_plot import line_plot
 from luketils.visualization.plot_bounding_box_gallery import plot_bounding_box_gallery
 from luketils.visualization.plot_gallery import plot_gallery
+from luketils.visualization.plot_latents import plot_latents

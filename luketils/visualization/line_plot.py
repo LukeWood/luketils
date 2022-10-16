@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 def line_plot(
     data,
     title=None,
-    legend='auto',
+    legend="auto",
     xlabel=None,
     ylabel=None,
     show=None,
