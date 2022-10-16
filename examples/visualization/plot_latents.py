@@ -12,7 +12,20 @@ from tensorflow.keras import layers
 import luketils
 
 """
-First, we create a `keras.Sequential` to transform our inputs to a low dimensional
+First, lets load some data and make sure it looks as we'd expect
+"""
+
+(x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
+x_train, x_test = np.expand_dims(x_train, axis=-1), np.expand_dims(x_test, axis=-1)
+x_train, x_test = x_train.astype(float) / 255.0, x_test.astype(float) / 255.0
+y_train, y_test = np.expand_dims(y_train, axis=-1), np.expand_dims(y_test, axis=-1)
+
+# TODO(lukewood): support grayscale.
+luketils.visualization.plot_gallery(
+    x_train, value_range=(0, 1), rows=9, cols=9, scale=0.5
+)
+"""
+Next, we create a `keras.Sequential` to transform our inputs to a low dimensional
 latent space:
 """
 
@@ -40,10 +53,11 @@ model.compile(
 """
 and finally run `model.fit()`:
 """
-(x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
-x_train, x_test = np.expand_dims(x_train, axis=-1), np.expand_dims(x_test, axis=-1)
-x_train, x_test = x_train.astype(float) / 255.0, x_test.astype(float) / 255.0
 model.fit(x_train, y_train, batch_size=64, epochs=10)
+
+"""
+Next, lets make
+"""
 
 """
 Lets see how the latent space is organized!
@@ -53,7 +67,7 @@ Lets see how the latent space is organized!
 latents = encoder.predict(x_test)
 
 labels = {x: x for x in range(10)}  # TODO(lukewood): replace with real labels
-luketils.visualization.plot_latents(latents, y_test, labels=labels, show=True)
+luketils.visualization.plot_latents(latents, y_test.squeeze(), labels=labels, show=True)
 
 """
 `plot_latents()` also supports 2D PCA for the weak hearted:

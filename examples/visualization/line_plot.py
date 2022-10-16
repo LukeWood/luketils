@@ -1,3 +1,10 @@
+"""
+Title: Concisely create a line plot
+Author: [lukewood](https://lukewood.xyz)
+Date created: 2022/10/16
+Last modified: 2022/10/16
+Description: Concisely create a line plot with `luketils.visualization.line_plot()`.
+"""
 import numpy as np
 from luketils import visualization
 
