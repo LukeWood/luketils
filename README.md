@@ -1,6 +1,6 @@
 # luketils
 
-TODO add badges from PyPi and all
+TODO add badges from PyPi and all the fun stuff
 
 `luketils` is a Python utility package aimed at machine learning practitioners.
 The goal of the package is to provide useful utilities in a coherently designed and
@@ -9,9 +9,15 @@ powerful API.
 _Call for Contributions:_ *luketils is actively seeking contributions from the ML
 community!  Please see the [Call for Contributions](#call_for_contributions) section below!*
 
+## Quick Links
+
+- [API Docs] (coming soon)!
+- Examples
+- Contributing
+
 ## Call for Contributions
 
-I'm hoping to crowdsource `luketils` and gather as many 
+I'm hoping to crowdsource `luketils` and gather as many
 useful machine learning oriented Python utilities as possible.  Have something useful?
 Open a PR!  I'll give it a review!  
 

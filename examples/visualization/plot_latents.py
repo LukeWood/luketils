@@ -1,15 +1,57 @@
-import numpy as np
+"""
+`luketils.visualization.plot_latents()` is probably my favorite visualization technique
+in all of `luketils`.  `plot_latents()` allows you to visualize high dimensional spaces
+in only a few lines of code!
 
+This can provide unique insights into your model's internal structure:
+"""
+
+import numpy as np
+from tensorflow import keras
 import luketils
 
-n = 1000
-y = np.random.choice([0, 1, 2, 3, 4, 5], size=(n,))
-labels = {l: l for l in range(6)}
+"""
+First, we create a `keras.Sequential` to transform our inputs to a low dimensional
+latent space:
+"""
 
-x = np.random.uniform(size=(n, 100))
+encoder = keras.Sequential(
+    [
+        keras.Input(shape=input_shape),
+        layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
+        layers.MaxPooling2D(pool_size=(2, 2)),
+        layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
+        layers.MaxPooling2D(pool_size=(2, 2)),
+        layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
+        layers.MaxPooling2D(pool_size=(2, 2)),
+        layers.Flatten(),
+    ],
+)
 
-for label in labels.keys():
-    x = np.where(np.expand_dims(y == label, axis=1), x * (label + 1), x)
+"""
+Then we construct the actual model we will use to perform training:
+"""
 
-luketils.visualization.plot_latents(x, y, labels=labels)
-luketils.visualization.plot_latents(x, y, labels=labels, dimensions=2)
+model = keras.Sequential([encoder, layers.Dense(10)])
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
+
+"""
+and finally run `model.fit()`:
+"""
+(x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
+model.fit(x_train, y_train, epochs=10)
+
+"""
+Lets see how the latent space is organized!
+"""
+
+# Transform to latent space
+latents = encoder.predict(x_test)
+
+labels = {x: x for x in range(10)} # TODO(lukewood): replace with real labels
+luketils.visualization.plot_latents(latents, y_test, labels=labels, show=True)
+
+"""
+`plot_latents()` also supports 2D PCA for the weak hearted:
+"""
+luketils.visualization.plot_latents(latents, y_test, labels=labels, dimensions=2, show=True)
