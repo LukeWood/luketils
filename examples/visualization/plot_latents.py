@@ -33,7 +33,9 @@ Then we construct the actual model we will use to perform training:
 """
 
 model = keras.Sequential([encoder, layers.Dense(10)])
-model.compile(loss="sparse_categorical_crossentropy", optimizer="adam")
+model.compile(
+    loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+)
 
 """
 and finally run `model.fit()`:

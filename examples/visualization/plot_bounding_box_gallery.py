@@ -1,4 +1,12 @@
 """
+Title: Using KerasCV COCO Metrics
+Author: [lukewood](https://twitter.com/luke_wood_ml)
+Date created: 2022/04/13
+Last modified: 2022/04/13
+Description: Use KerasCV COCO metrics to evaluate object detection models.
+"""
+
+"""
 `luketils.visualization.plot_bounding_box_gallery()` is a function dedicated to the
 visualization for bounding boxes predicted by a `TensorFlow` object detection model.
 The API is based on the `KerasCV` object detection API.
