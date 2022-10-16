@@ -18,7 +18,6 @@ latent space:
 
 encoder = keras.Sequential(
     [
-        layers.Input((None, 32, 32, 1)),
         layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
         layers.MaxPooling2D(pool_size=(2, 2)),
         layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
@@ -40,7 +39,9 @@ model.compile(loss="sparse_categorical_crossentropy", optimizer="adam")
 and finally run `model.fit()`:
 """
 (x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
-x_train, x_test = x_train.expand_dims(axis=-1), x_test.expand_dims(axis=-1)
+x_train, x_test = np.expand_dims(x_train, axis=-1), np.expand_dims(x_test, axis=-1)
+print(x_train.shape)
+input()
 model.fit(x_train, y_train, batch_size=64, epochs=10)
 
 """
