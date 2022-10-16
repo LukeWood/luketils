@@ -41,7 +41,7 @@ and finally run `model.fit()`:
 (x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
 x_train, x_test = np.expand_dims(x_train, axis=-1), np.expand_dims(x_test, axis=-1)
 x_train, x_test = x_train.astype(float)/255.0, x_test.astype(float)/255.0
-model.fit(x_train, y_train, batch_size=64, epochs=10)
+model.fit(x_train, y_train, batch_size=64, epochs=1)
 
 """
 Lets see how the latent space is organized!
@@ -59,3 +59,7 @@ luketils.visualization.plot_latents(latents, y_test, labels=labels, show=True)
 luketils.visualization.plot_latents(
     latents, y_test, labels=labels, dimensions=2, show=True
 )
+
+"""
+For better results, run for more epochs.
+"""
