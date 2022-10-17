@@ -6,8 +6,7 @@ TODO add badges from PyPi and all the fun stuff
 The goal of the package is to provide useful utilities in a coherently designed and
 powerful API.
 
-_Call for Contributions:_ *luketils is actively seeking contributions from the ML
-community!  Please see the [Call for Contributions](#call_for_contributions) section below!*
+_Call for Contributions:_ *luketils is actively seeking contributions!  Please see the [Call for Contributions](#call_for_contributions) section below!*
 
 ## Quick Links
 
