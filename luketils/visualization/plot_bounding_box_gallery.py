@@ -25,6 +25,8 @@ def plot_bounding_box_gallery(
     prediction_mapping=None,
     legend=False,
     legend_handles=None,
+    rows=3,
+    cols=3,
     **kwargs
 ):
     """plots a gallery of images with corresponding bounding box annotations
@@ -58,6 +60,31 @@ def plot_bounding_box_gallery(
     """
     prediction_mapping = prediction_mapping or class_mapping
     ground_truth_mapping = ground_truth_mapping or class_mapping
+
+    if isinstance(images, tf.data.Dataset):
+        if y_true is not None or y_pred is not None:
+            raise ValueError(
+                'When passing a ` tf.data.Dataset` to '
+                '`plot_bounding_box_gallery()`, please do not provide `y_true` or '
+                '`y_pred`. The values for `bounding_boxes` will be interpreted as '
+                '`y_true` when inputs are a dictionary, or the second item of the '
+                'input tuple.'
+            )
+
+        images, boxes = [], []
+        ds_iter = iter(images)
+        total = 0
+        while total < rows * cols:
+            inputs = next(ds_iter)
+            if isinstance(inputs, dict):
+                x, y = inputs["images"], inputs["bounding_boxes"]
+            else:
+                x, y = inputs[0], inputs[1]
+            total += x.shape[0]
+            images.append(x)
+            boxes.append(y)
+        images = tf.concatenate(images, axis=0)
+        y_true = tf.concatenate(boxes, axis=0)
 
     images = utils.to_numpy(images)
     y_true = utils.to_numpy(y_true)
@@ -94,4 +121,4 @@ def plot_bounding_box_gallery(
             patches.Patch(color=np.array(pred_color) / 255.0, label="Prediction"),
         ]
 
-    plot_gallery(plotted_images, value_range, legend_handles=legend_handles, **kwargs)
+    plot_gallery(plotted_images, value_range, legend_handles=legend_handles, rows=rows, cols=cols, **kwargs)

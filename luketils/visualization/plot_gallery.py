@@ -7,11 +7,10 @@ def plot_gallery(
     images,
     value_range,
     rows=3,
-    columns=3,
+    cols=3,
     scale=2,
     path=None,
     show=None,
-    cols=None,
     transparent=True,
     dpi=60,
     legend_handles=None,
@@ -22,11 +21,10 @@ def plot_gallery(
         images: a Tensor or NumPy array containing images to show in the gallery.
         value_range: value range of the images.
         rows: number of rows in the gallery to show.
-        columns: number of columns in the gallery to show.
+        cols: number of columns in the gallery to show.
         scale: how large to scale the images in the gallery
         path: (Optional) path to save the resulting gallery to.
         show: (Optional) whether or not to show the gallery of images.
-        cols: (Optional) alias for columns.
         transparent: (Optional) whether or not to give the image a transparent
             background.  Defaults to True.
         dpi: (Optional) the dpi to pass to matplotlib.savefig().  Defaults to `60`.
@@ -34,7 +32,6 @@ def plot_gallery(
             I.e. passing: `[patches.Patch(color='red', label='mylabel')]` will produce
             a legend with a single red patch and the label 'mylabel'.
     """
-    columns = cols if cols is not None else columns
     if path is None and show is None:
         # Default to showing the image
         show = True
@@ -42,6 +39,24 @@ def plot_gallery(
         raise ValueError(
             "plot_gallery() expects either `path` to be set, or `show` " "to be true."
         )
+
+
+    if isinstance(images, tf.data.Dataset):
+        ds_iter = iter(images)
+        total = 0
+        images = []
+        while total < rows * cols:
+            inputs = next(ds_iter)
+            if isinstance(inputs, dict):
+                x = inputs["images"]
+            elif isinstance(inputs, tuple):
+                x = inputs[0]
+            else:
+                x = inputs
+            total += x.shape[0]
+            images.append(x)
+            boxes.append(y)
+        images = tf.concatenate(images, axis=0)
 
     fig = plt.figure(figsize=(columns * scale, rows * scale))
     fig.tight_layout()  # Or equivalently,  "plt.tight_layout()"
