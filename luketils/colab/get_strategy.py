@@ -23,7 +23,10 @@ def get_strategy(require_tpu=False, require_gpu=False, try_tpu=True, verbose=1):
             tf.config.experimental_connect_to_cluster(resolver)
             tf.tpu.experimental.initialize_tpu_system(resolver)
             if verbose >= 1:
-                print("All TPU devices: ", tf.config.list_logical_devices("TPU"))
+                print(
+                    "Using TPU strategy with device: ",
+                    tf.config.list_logical_devices("TPU"),
+                )
             return tf.distribute.TPUStrategy(resolver)
         except ValueError:
             if verbose >= 2:
@@ -35,6 +38,8 @@ def get_strategy(require_tpu=False, require_gpu=False, try_tpu=True, verbose=1):
                 )
 
     if len(tf.config.list_physical_devices("GPU")) > 0:
+        if verbose >= 1:
+            print("Using SingleDeviceStrategy with one GPU.")
         return tf.distribute.SingleDeviceStrategy(device="/gpu:0")
 
     if require_gpu:
@@ -42,4 +47,5 @@ def get_strategy(require_tpu=False, require_gpu=False, try_tpu=True, verbose=1):
             "No GPU device found, but `require_gpu=True`. "
             "Please enable GPU in your Colab runtime."
         )
+    print("No hardware accelerators found, running with the default strategy.")
     return tf.distribute.get_strategy()
