@@ -57,7 +57,7 @@ def plot_gallery(
             boxes.append(y)
         images = tf.concatenate(images, axis=0)
 
-    fig = plt.figure(figsize=(columns * scale, rows * scale))
+    fig = plt.figure(figsize=(cols * scale, rows * scale))
     fig.tight_layout()  # Or equivalently,  "plt.tight_layout()"
     plt.subplots_adjust(wspace=0, hspace=0)
     plt.margins(x=0, y=0)
@@ -74,9 +74,9 @@ def plot_gallery(
 
     images = images.astype(int)
     for row in range(rows):
-        for col in range(columns):
-            index = row * columns + col
-            plt.subplot(rows, columns, index + 1)
+        for col in range(cols):
+            index = row * cols + col
+            plt.subplot(rows, cols, index + 1)
             plt.imshow(images[index].astype("uint8"))
             plt.axis("off")
             plt.margins(x=0, y=0)
