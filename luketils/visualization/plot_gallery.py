@@ -40,7 +40,6 @@ def plot_gallery(
             "plot_gallery() expects either `path` to be set, or `show` " "to be true."
         )
 
-
     if isinstance(images, tf.data.Dataset):
         ds_iter = iter(images)
         total = 0

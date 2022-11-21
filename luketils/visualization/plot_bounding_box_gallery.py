@@ -2,6 +2,7 @@ import functools
 
 import keras_cv
 import numpy as np
+import tensorflow as tf
 from matplotlib import patches
 
 from luketils import drawing
@@ -64,11 +65,11 @@ def plot_bounding_box_gallery(
     if isinstance(images, tf.data.Dataset):
         if y_true is not None or y_pred is not None:
             raise ValueError(
-                'When passing a ` tf.data.Dataset` to '
-                '`plot_bounding_box_gallery()`, please do not provide `y_true` or '
-                '`y_pred`. The values for `bounding_boxes` will be interpreted as '
-                '`y_true` when inputs are a dictionary, or the second item of the '
-                'input tuple.'
+                "When passing a ` tf.data.Dataset` to "
+                "`plot_bounding_box_gallery()`, please do not provide `y_true` or "
+                "`y_pred`. The values for `bounding_boxes` will be interpreted as "
+                "`y_true` when inputs are a dictionary, or the second item of the "
+                "input tuple."
             )
 
         images, boxes = [], []
@@ -121,4 +122,11 @@ def plot_bounding_box_gallery(
             patches.Patch(color=np.array(pred_color) / 255.0, label="Prediction"),
         ]
 
-    plot_gallery(plotted_images, value_range, legend_handles=legend_handles, rows=rows, cols=cols, **kwargs)
+    plot_gallery(
+        plotted_images,
+        value_range,
+        legend_handles=legend_handles,
+        rows=rows,
+        cols=cols,
+        **kwargs
+    )
