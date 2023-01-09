@@ -13,6 +13,8 @@ The API is based on the `KerasCV` object detection API.
 """
 
 import keras_cv
+import tensorflow as tf
+import tensorflow_datasets as tfds
 
 import luketils
 
@@ -20,10 +22,28 @@ import luketils
 First, we load a dataset:
 """
 
-train_ds, ds_info = keras_cv.datasets.pascal_voc.load(
-    split="train", bounding_box_format="xywh", batch_size=9
+train_ds = tfds.load(
+    "voc/2007", split="train+validation", with_info=False, shuffle_files=True
 )
-train_ds = train_ds.map(lambda sample: (sample["images"], sample["bounding_boxes"]))
+
+
+def unpackage_tfds_inputs(inputs):
+    image = inputs["image"]
+    image = tf.cast(image, tf.float32)
+    boxes = inputs["objects"]["bbox"]
+    boxes = keras_cv.bounding_box.convert_format(
+        boxes,
+        images=image,
+        source="rel_yxyx",
+        target="xywh",
+    )
+    classes = tf.cast(inputs["objects"]["label"], tf.float32)
+    bounding_boxes = {"classes": classes, "boxes": boxes}
+    return image, bounding_boxes
+
+
+train_ds = train_ds.map(unpackage_tfds_inputs)
+train_ds = train_ds.apply(tf.data.experimental.dense_to_ragged_batch(16))
 images, boxes = next(iter(train_ds.take(1)))
 
 """

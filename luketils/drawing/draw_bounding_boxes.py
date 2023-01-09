@@ -52,7 +52,8 @@ def draw_bounding_boxes(
     )
     text_thickness = text_thickness or thickness
 
-    bounding_boxes = utils.to_numpy(bounding_boxes)
+    bounding_boxes["boxes"] = utils.to_numpy(bounding_boxes["boxes"])
+    bounding_boxes["classes"] = utils.to_numpy(bounding_boxes["classes"])
     images = utils.to_numpy(images)
 
     class_mapping = class_mapping or {}
@@ -65,10 +66,14 @@ def draw_bounding_boxes(
         )
 
     for i in range(images.shape[0]):
-        bounding_box_batch = bounding_boxes[i]
+        bounding_box_batch = {
+            "boxes": bounding_boxes["boxes"][i],
+            "classes": bounding_boxes["classes"][i],
+        }
         image = utils.to_numpy(images[i]).astype("uint8")
-        for b_id in range(bounding_box_batch.shape[0]):
-            x, y, x2, y2, class_id = bounding_box_batch[b_id][:5].astype(int)
+        for b_id in range(bounding_box_batch["boxes"].shape[0]):
+            x, y, x2, y2 = bounding_box_batch["boxes"][b_id].astype(int)
+            class_id = bounding_box_batch["classes"][b_id].astype(int)
 
             if class_id == -1:
                 continue

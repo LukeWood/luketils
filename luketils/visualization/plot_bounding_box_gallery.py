@@ -32,16 +32,17 @@ def plot_bounding_box_gallery(
 ):
     """plots a gallery of images with corresponding bounding box annotations
 
-    !Example bounding box gallery](https://i.imgur.com/Fy7kMnP.png)
+    ![Example bounding box gallery](https://i.imgur.com/Fy7kMnP.png)
 
     Args:
         images: a Tensor or NumPy array containing images to show in the gallery.
         value_range: value range of the images.
         bounding_box_format: the bounding_box_format  the provided bounding boxes are
             in.
-        y_true: a Tensor or RaggedTensor representing the ground truth bounding boxes.
-        y_pred: a Tensor or RaggedTensor representing the predicted truth bounding
+        y_true: a KerasCV bounding box dictionary representing the ground truth bounding
             boxes.
+        y_pred: a KerasCV bounding box dictionary representing the predicted truth
+            bounding boxes.
         pred_color: three element tuple representing the color to use for plotting
             predicted bounding boxes.
         true_color: three element tuple representing the color to use for plotting
@@ -62,34 +63,7 @@ def plot_bounding_box_gallery(
     prediction_mapping = prediction_mapping or class_mapping
     ground_truth_mapping = ground_truth_mapping or class_mapping
 
-    if isinstance(images, tf.data.Dataset):
-        if y_true is not None or y_pred is not None:
-            raise ValueError(
-                "When passing a ` tf.data.Dataset` to "
-                "`plot_bounding_box_gallery()`, please do not provide `y_true` or "
-                "`y_pred`. The values for `bounding_boxes` will be interpreted as "
-                "`y_true` when inputs are a dictionary, or the second item of the "
-                "input tuple."
-            )
-
-        images, boxes = [], []
-        ds_iter = iter(images)
-        total = 0
-        while total < rows * cols:
-            inputs = next(ds_iter)
-            if isinstance(inputs, dict):
-                x, y = inputs["images"], inputs["bounding_boxes"]
-            else:
-                x, y = inputs[0], inputs[1]
-            total += x.shape[0]
-            images.append(x)
-            boxes.append(y)
-        images = tf.concatenate(images, axis=0)
-        y_true = tf.concatenate(boxes, axis=0)
-
     images = utils.to_numpy(images)
-    y_true = utils.to_numpy(y_true)
-    y_pred = utils.to_numpy(y_pred)
 
     plotted_images = images
 
@@ -102,11 +76,15 @@ def plot_bounding_box_gallery(
     )
 
     if y_true is not None:
+        y_true["boxes"] = utils.to_numpy(y_true["boxes"])
+        y_true["classes"] = utils.to_numpy(y_true["classes"])
         plotted_images = draw_fn(
             plotted_images, y_true, true_color, class_mapping=ground_truth_mapping
         )
 
     if y_pred is not None:
+        y_pred["boxes"] = utils.to_numpy(y_pred["boxes"])
+        y_pred["classes"] = utils.to_numpy(y_pred["classes"])
         plotted_images = draw_fn(
             plotted_images, y_pred, pred_color, class_mapping=prediction_mapping
         )
