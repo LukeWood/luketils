@@ -30,7 +30,7 @@ setup(
     author_email="lukewoodcs@gmail.com",
     url="https://github.com/lukewood/luketils",
     license="Apache License 2.0",
-    install_requires=["opencv-python", "tensorflow", "scikit-learn"],
+    install_requires=["opencv-python", "scikit-learn"],
     extras_require={
         "dev": [
             "flake8",
