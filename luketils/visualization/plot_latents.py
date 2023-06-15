@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
-
 from luketils.utils.to_numpy import to_numpy
 
 
