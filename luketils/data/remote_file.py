@@ -1,4 +1,3 @@
-import keras
 import os
 import numpy as np
 from .get_file import get_file
