@@ -17,7 +17,8 @@ _Call for Contributions:_ *luketils is actively seeking contributions!  Please s
 ## Call for Contributions
 
 I'm hoping to crowdsource `luketils` and gather as many
-useful machine learning oriented Python utilities as possible.  Have something useful?
+useful machine learning oriented Python utilities as possible.  
+Have something useful?
 Open a PR!  I'll give it a review!  
 
 Don't have an idea?  Check out the [Contributions Welcome] hotlist!
