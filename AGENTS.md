@@ -7,6 +7,8 @@ Focus on modularity, reusability, and functional programming.
 
 # Python style guide
 
+## Basic Style
+
 - do not write try/except, ever.  LET IT CRASH
 - only create empty __init__.py files,
 - use modern type hints, `dict` not `Dict`, `x|None` not optional[x]
@@ -14,3 +16,17 @@ Focus on modularity, reusability, and functional programming.
 - type annotations
 - everything should be functional
 
+## Error handling
+
+Always use informative error messages.
+Instead of:
+```python
+    raise RuntimeError("Not in a git repository")
+```
+Write:
+```python
+raise RuntimeError(
+    "Expected `get_repo_root()` to be called from a git repository, "
+    f"but {path} is not a git repository."
+)
+```
