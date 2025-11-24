@@ -1,3 +1,4 @@
+import contextlib
 import sys
 from dataclasses import dataclass
 
@@ -26,3 +27,20 @@ class RemoteHostConfig:
             username=self.username,
         )
         return ParamikoCommandExecutor(ssh_client)
+
+    @contextlib.contextmanager
+    def executor(self):
+        ssh_client = create_ssh_client(
+            hostname=self.hostname,
+            port=self.port,
+            username=self.username,
+        )
+        try:
+            yield ParamikoCommandExecutor(ssh_client)
+        finally:
+            ssh_client.close()
+
+    def get_home(self) -> str:
+        with self.executor() as e:
+            home_result = e.run_command("echo $HOME")
+        return home_result.stdout.strip()

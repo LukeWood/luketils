@@ -47,7 +47,7 @@ def sync_code(
         "-e",
         ssh_cmd,
         f"{sync_config.local_root}/",
-        f"{host_config.user_host()}:{sync_config.remote_path}/",
+        f"{host_config.ssh_command_hostname()}:{sync_config.remote_path}/",
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)

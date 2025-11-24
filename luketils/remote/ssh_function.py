@@ -39,13 +39,17 @@ def ssh_function(host: str, port: int = 22, username: str | None = None):
             branch_name = get_current_branch()
             gitignore_patterns = get_gitignore_patterns()
 
-            remote_path = f"~/.remote-repos/{repo_name}/{branch_name}"
+            remote_path_template = f"~/.remote-repos/{repo_name}/{branch_name}"
 
             host_config = RemoteHostConfig(
                 hostname=host,
                 port=port,
                 username=username,
             )
+
+            home_dir = host_config.get_home()
+            remote_path = remote_path_template.replace("~", home_dir)
+
             sync_config = SyncConfig(
                 local_root=git_root,
                 remote_path=remote_path,
@@ -72,7 +76,7 @@ def ssh_function(host: str, port: int = 22, username: str | None = None):
 
             pickled_data = serialize_function_for_execution(func, *args, **kwargs)
 
-            remote_cmd = f"cd {remote_path} && uv run --python {python_version} python {remote_entrypoint_path} 2>&1"
+            remote_cmd = f"cd {remote_path} && uv run --python {python_version} python {remote_entrypoint_path}"
             stdin, stdout, stderr = ssh_client.exec_command(remote_cmd)
             stdin.write(pickled_data)
             stdin.channel.shutdown_write()
