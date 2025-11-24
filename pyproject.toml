@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "luketils"
+version = "0.2.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache License 2.0"}
+authors = [
+    {name = "Luke Wood", email = "lukewoodcs@gmail.com"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "cloudpickle",
+    "paramiko",
+    "argcomplete", # Required for shell autocomplete support in CLI utilities
+    "opencv-python",
+    "scikit-learn",
+]
+[project.optional-dependencies]
+dev = [
+    "flake8",
+    "pytest",
+    "pytype",
+    "setuptools",
+    "twine",
+    "wheel",
+]
+
+
+[project.urls]
+Homepage = "https://github.com/lukewood/luketils"
+
