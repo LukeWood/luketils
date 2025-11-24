@@ -38,6 +38,7 @@ dev = [
 ]
 [project.scripts]
 remote_run = "luketils.cli.remote_run:main"
+remote_exec = "luketils.cli.remote_exec:main"
 
 [project.urls]
 Homepage = "https://github.com/lukewood/luketils"
