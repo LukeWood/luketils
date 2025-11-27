@@ -26,6 +26,7 @@ dependencies = [
     "argcomplete", # Required for shell autocomplete support in CLI utilities
     "opencv-python",
     "scikit-learn",
+    "frozendict>=2.4.7",
 ]
 [project.optional-dependencies]
 dev = [
