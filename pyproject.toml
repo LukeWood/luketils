@@ -27,6 +27,7 @@ dependencies = [
     "opencv-python",
     "scikit-learn",
     "frozendict>=2.4.7",
+    "requests[socks]>=2.32.5",
 ]
 [project.optional-dependencies]
 dev = [
