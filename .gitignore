@@ -1,4 +1,5 @@
 luketils.egg-info/
+__marimo__
 __pycache__/
 build/
 dist/

@@ -27,6 +27,8 @@ dependencies = [
     "opencv-python",
     "scikit-learn",
     "frozendict>=2.4.7",
+    "marimo>=0.19.6",
+    "anywidget>=0.9.21",
 ]
 [project.optional-dependencies]
 dev = [
@@ -36,6 +38,9 @@ dev = [
     "setuptools",
     "twine",
     "wheel",
+]
+marimo = [
+    "marimo",
 ]
 
 
