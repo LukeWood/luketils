@@ -387,12 +387,13 @@ class LiveProfiler:
                 time.sleep(sleep_time)
                 elapsed += sleep_time
 
-    def _should_filter_function(self, filename: str) -> bool:
+    def _should_filter_function(self, filename: str, function_name: str) -> bool:
         """
         Check if a function should be filtered out from profiling results.
 
         Args:
             filename: The filename where the function is defined
+            function_name: The name of the function
 
         Returns:
             True if the function should be filtered out, False otherwise
@@ -400,6 +401,11 @@ class LiveProfiler:
         # Filter out the profiler's own file
         if os.path.abspath(filename) == self._profiler_file:
             return True
+
+        # Filter out marimo cell functions (they show up as __)
+        if function_name == "__":
+            return True
+
         return False
 
     def _format_initial_html(self) -> str:
@@ -433,8 +439,10 @@ class LiveProfiler:
                 func_key = entry.function_key
                 func_stats = entry.stats
 
-                # Filter out the profiler's own methods
-                if self._should_filter_function(func_key.filename):
+                # Filter out the profiler's own methods and marimo cells
+                if self._should_filter_function(
+                    filename=func_key.filename, function_name=func_key.function_name
+                ):
                     continue
 
                 # Format the function key into display-friendly info
