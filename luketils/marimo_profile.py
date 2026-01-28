@@ -245,6 +245,30 @@ class LiveProfiler:
 
             return StatsResult(stats_data=stats_data, total_time=total_time)
 
+    def _render_html(self, stats_result: StatsResult, final: bool) -> str | None:
+        """Render HTML for the given stats result.
+
+        Args:
+            stats_result: The profiling statistics to render
+            final: Whether this is the final render
+
+        Returns:
+            HTML string to display, or None to keep the current display
+        """
+        if not stats_result.stats_data:
+            if not final:
+                return None  # Keep showing "Starting profiler..."
+            else:
+                return render_no_data_html()
+
+        render_input = RenderInput(
+            stats_data=stats_result.stats_data,
+            total_time=stats_result.total_time,
+            final=final,
+            top_n=self.top_n,
+        )
+        return render_stats_html(render_input=render_input)
+
     def _display_stats(self, final: bool):
         """Display the current profiling stats."""
         if self._widget_instance is None:
@@ -255,29 +279,12 @@ class LiveProfiler:
             return
 
         stats_result = self._get_stats_data()
+        html = self._render_html(stats_result=stats_result, final=final)
 
-        # If no stats yet, show loading message
-        if not stats_result.stats_data:
-            if not final:
-                return  # Keep showing "Starting profiler..."
-            else:
-                # Even at the end, if there are no stats, show a message
-                html = render_no_data_html()
-                self._widget_instance.html_content = html
-                return
-
-        # Create render input and call pure rendering function
-        render_input = RenderInput(
-            stats_data=stats_result.stats_data,
-            total_time=stats_result.total_time,
-            final=final,
-            top_n=self.top_n,
-        )
-        html = render_stats_html(render_input=render_input)
-
-        # Update the widget's html_content trait
-        # This will trigger the JavaScript model.on("change:html_content") handler
-        self._widget_instance.html_content = html
+        if html is not None:
+            # Update the widget's html_content trait
+            # This will trigger the JavaScript model.on("change:html_content") handler
+            self._widget_instance.html_content = html
 
 
 @contextmanager

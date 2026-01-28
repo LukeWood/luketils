@@ -64,7 +64,7 @@ def _(marimo_profile, mo):
     mo.md("**Running recursive Fibonacci calculations...**")
 
     # Profile the fibonacci code
-    with marimo_profile(refresh_interval=0.3, top_n=10):
+    with marimo_profile(top_n=10):
         results = run_fibonacci()
     return
 
