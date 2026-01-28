@@ -967,7 +967,7 @@ wheels = [
 
 [[package]]
 name = "luketils"
-version = "0.2.0"
+version = "0.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "anywidget" },
@@ -995,12 +995,12 @@ marimo = [
 
 [package.metadata]
 requires-dist = [
-    { name = "anywidget", specifier = ">=0.9.21" },
+    { name = "anywidget" },
     { name = "argcomplete" },
     { name = "cloudpickle" },
     { name = "flake8", marker = "extra == 'dev'" },
-    { name = "frozendict", specifier = ">=2.4.7" },
-    { name = "marimo", specifier = ">=0.19.6" },
+    { name = "frozendict" },
+    { name = "marimo" },
     { name = "marimo", marker = "extra == 'marimo'" },
     { name = "opencv-python" },
     { name = "paramiko" },

@@ -155,6 +155,34 @@ def _find_class_context(
     return None
 
 
+def _normalize_function_name(raw_name: str) -> str:
+    """Normalize function name to be readable, replacing non-printable characters.
+
+    Args:
+        raw_name: The raw function name from pstats
+
+    Returns:
+        Normalized function name with non-printable chars replaced
+    """
+    if not raw_name:
+        return "<empty>"
+
+    # Check if name has non-printable characters
+    has_non_printable = any(not c.isprintable() for c in raw_name)
+
+    if has_non_printable:
+        # Replace non-printable with hex representation
+        normalized = ""
+        for c in raw_name:
+            if c.isprintable():
+                normalized += c
+            else:
+                normalized += f"\\x{ord(c):02x}"
+        return f"<{normalized}>"
+
+    return raw_name
+
+
 def _format_function_name(function_name: str, class_name: str | None) -> str:
     """Format a function name, optionally with class context.
 
@@ -164,7 +192,16 @@ def _format_function_name(function_name: str, class_name: str | None) -> str:
 
     Returns:
         Formatted display name with parentheses (e.g., "MyClass:method()")
+
+    Raises:
+        ValueError: If function_name is invalid or would produce empty output
     """
+    # Validate input
+    if not isinstance(function_name, str):
+        raise TypeError(
+            f"function_name must be str, got {type(function_name)}: {function_name!r}"
+        )
+
     # Handle special/built-in function names
     if not function_name or function_name.strip() == "":
         return "<unknown>"
@@ -178,9 +215,18 @@ def _format_function_name(function_name: str, class_name: str | None) -> str:
 
     # Format as class method if we have a class context
     if class_name:
-        return f"{class_name}:{display_name}"
+        result = f"{class_name}:{display_name}"
+    else:
+        result = display_name
 
-    return display_name
+    # Validate output - should never be just "()"
+    if result == "()":
+        raise ValueError(
+            f"Invalid formatted name '()' produced from function_name={function_name!r}, "
+            f"class_name={class_name!r}"
+        )
+
+    return result
 
 
 @lru_cache(maxsize=256)
@@ -212,7 +258,17 @@ def _format_function_key(function_key: FunctionKey) -> FormattedFunctionInfo:
 
     Returns:
         Formatted function information
+
+    Raises:
+        ValueError: If formatting produces invalid output
     """
+    # Validate input
+    if not isinstance(function_key, FunctionKey):
+        raise TypeError(f"Expected FunctionKey, got {type(function_key)}")
+
+    # Normalize the function name first (handles non-printable characters)
+    normalized_name = _normalize_function_name(function_key.function_name)
+
     # Detect class context if this is a real source file
     class_name = None
     if (
@@ -226,9 +282,9 @@ def _format_function_key(function_key: FunctionKey) -> FormattedFunctionInfo:
             function_name=function_key.function_name,
         )
 
-    # Format the function name
+    # Format the function name (this will raise if it produces "()")
     display_name = _format_function_name(
-        function_name=function_key.function_name, class_name=class_name
+        function_name=normalized_name, class_name=class_name
     )
 
     # Format the file path
@@ -236,6 +292,10 @@ def _format_function_key(function_key: FunctionKey) -> FormattedFunctionInfo:
 
     # Get line number
     line_number = function_key.line if function_key.line is not None else 0
+
+    # Final validation
+    if not display_name or display_name.strip() == "":
+        raise ValueError(f"Empty display_name produced from {function_key!r}")
 
     return FormattedFunctionInfo(
         display_name=display_name, file_path=file_path, line_number=line_number
@@ -250,6 +310,10 @@ def _parse_pstats(stats_dict: dict) -> list[RawStatsEntry]:
 
     Returns:
         List of RawStatsEntry objects with parsed structure
+
+    Raises:
+        ValueError: If the stats data structure is invalid
+        TypeError: If data types are incorrect
     """
     entries = []
     for func, (cc, nc, tt, ct, callers) in stats_dict.items():
@@ -273,6 +337,12 @@ def _parse_pstats(stats_dict: dict) -> list[RawStatsEntry]:
         if not isinstance(func_name, str):
             raise TypeError(
                 f"Expected func_name to be str, got {type(func_name)}: {func_name!r}"
+            )
+
+        # Additional validation - catch suspicious function names
+        if func_name.strip() == "" and filename not in ("<built-in>", "~", ""):
+            raise ValueError(
+                f"Empty function name for non-builtin file: {filename!r} line {line}"
             )
 
         entries.append(
@@ -372,20 +442,56 @@ class LiveProfiler:
 
     def _update_loop(self):
         """Background thread that updates stats periodically."""
+        import traceback
+
         assert self._mo
         thread = self._mo.current_thread()
         # Check exit every 10ms for responsiveness
         check_interval = 0.01
 
-        while not thread.should_exit:
-            self._display_stats(final=False)
+        try:
+            while not thread.should_exit:
+                try:
+                    self._display_stats(final=False)
+                except Exception as e:
+                    # Log the error and display it to the user
+                    error_msg = f"Error updating profiler stats: {e}"
+                    print(f"\n{'=' * 60}")
+                    print(f"PROFILER ERROR:")
+                    print(error_msg)
+                    print(f"{'=' * 60}")
+                    traceback.print_exc()
+                    print(f"{'=' * 60}\n")
 
-            # Sleep in small increments to check should_exit frequently
-            elapsed = 0.0
-            while elapsed < self.refresh_interval and not thread.should_exit:
-                sleep_time = min(check_interval, self.refresh_interval - elapsed)
-                time.sleep(sleep_time)
-                elapsed += sleep_time
+                    # Try to display error in widget
+                    if self._widget_instance:
+                        error_html = f"""
+                        <div style="border: 2px solid #ef4444; border-radius: 12px; padding: 20px; background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%); margin: 10px 0;">
+                            <div style="color: #ef4444; font-weight: bold; font-size: 18px; margin-bottom: 10px;">⚠️ Profiler Error</div>
+                            <div style="color: #fca5a5; font-family: monospace; font-size: 12px; white-space: pre-wrap;">{error_msg}</div>
+                            <div style="color: #9ca3af; font-size: 11px; margin-top: 10px;">Check console for full traceback</div>
+                        </div>
+                        """
+                        self._widget_instance.html_content = error_html
+
+                    # Re-raise to crash properly
+                    raise
+
+                # Sleep in small increments to check should_exit frequently
+                elapsed = 0.0
+                while elapsed < self.refresh_interval and not thread.should_exit:
+                    sleep_time = min(check_interval, self.refresh_interval - elapsed)
+                    time.sleep(sleep_time)
+                    elapsed += sleep_time
+
+        except Exception as e:
+            # Catch any unexpected errors in the loop itself
+            print(f"\n{'=' * 60}")
+            print(f"FATAL PROFILER ERROR:")
+            print(f"{e}")
+            print(f"{'=' * 60}")
+            traceback.print_exc()
+            print(f"{'=' * 60}\n")
 
     def _should_filter_function(self, filename: str, function_name: str) -> bool:
         """
@@ -398,12 +504,44 @@ class LiveProfiler:
         Returns:
             True if the function should be filtered out, False otherwise
         """
+        # Debug: Log if we see empty function name
+        if function_name == "":
+            print(f"DEBUG FILTER: Empty function name! filename={filename!r}")
+            return True
+
         # Filter out the profiler's own file
         if os.path.abspath(filename) == self._profiler_file:
             return True
 
-        # Filter out marimo cell functions (they show up as __)
-        if function_name == "__":
+        # Filter out marimo framework internals
+        marimo_internal_paths = [
+            "marimo/_output/",
+            "marimo/_runtime/",
+            "marimo/_plugins/",
+            "marimo/_server/",
+        ]
+        for internal_path in marimo_internal_paths:
+            if internal_path in filename.replace("\\", "/"):
+                return True
+
+        # Filter out empty or whitespace-only function names
+        if not function_name or not function_name.strip():
+            print(f"DEBUG FILTER: Whitespace-only function name! {function_name!r} filename={filename!r}")
+            return True
+
+        # Filter out function names with only non-printable/weird characters
+        printable_chars = [c for c in function_name if c.isprintable() and c.strip()]
+        if len(printable_chars) == 0:
+            print(f"DEBUG FILTER: Non-printable function name! {function_name!r} bytes={function_name.encode('utf-8')!r}")
+            return True
+
+        # Filter out marimo cell functions (they show up as __ or variations)
+        if function_name.strip() == "__":
+            return True
+
+        # Also filter if function name is just underscores (up to 4)
+        stripped = function_name.strip()
+        if stripped and all(c == "_" for c in stripped) and len(stripped) <= 4:
             return True
 
         return False
@@ -423,30 +561,65 @@ class LiveProfiler:
             stats_data: list[StatsData] = []
 
             # Calculate total time from all function cumulative times
-            if not hasattr(stats, "stats") or not stats.stats:
+            if not hasattr(stats, "stats"):
                 return StatsResult(stats_data=[], total_time=0.0)
 
             # Parse raw pstats into structured dataclasses
-            raw_entries = _parse_pstats(stats.stats)
+            raw_entries = _parse_pstats(stats.stats)  # type: ignore
 
-            # Calculate total time
-            total_time = sum(entry.stats.cumulative_time for entry in raw_entries)
+            # Filter entries first, before calculating totals
+            filtered_entries = []
+            for entry in raw_entries:
+                func_name = entry.function_key.function_name
+                filename = entry.function_key.filename
+
+                # Debug: Log only truly problematic entries (empty or non-printable)
+                has_non_printable = any(not c.isprintable() for c in func_name) if func_name else False
+                if func_name == "" or not func_name.strip() or has_non_printable:
+                    print(f"DEBUG PRE-FILTER: Found problematic entry!")
+                    print(f"  func_name repr: {func_name!r}")
+                    print(f"  func_name bytes: {func_name.encode('utf-8')!r}")
+                    print(f"  func_name len: {len(func_name)}")
+                    print(f"  Has non-printable: {has_non_printable}")
+                    print(f"  filename={filename!r}")
+                    print(f"  Calling filter...")
+
+                should_filter = self._should_filter_function(
+                    filename=filename,
+                    function_name=func_name,
+                )
+
+                if func_name == "" or not func_name.strip() or has_non_printable:
+                    print(f"  Filter returned: {should_filter}")
+
+                if not should_filter:
+                    filtered_entries.append(entry)
+
+            # Calculate total time from filtered entries only
+            total_time = sum(entry.stats.cumulative_time for entry in filtered_entries)
             if total_time == 0:
                 total_time = 1.0
 
-            # Process each entry
-            for entry in raw_entries:
+            # Process each filtered entry
+            for entry in filtered_entries:
                 func_key = entry.function_key
                 func_stats = entry.stats
 
-                # Filter out the profiler's own methods and marimo cells
-                if self._should_filter_function(
-                    filename=func_key.filename, function_name=func_key.function_name
-                ):
-                    continue
+                # Debug: Log only truly empty/problematic function names
+                stripped = func_key.function_name.strip()
+                if not stripped or stripped in ("__", "()", "~") or (all(c == "_" for c in stripped)):
+                    print(f"DEBUG: Processing empty/problematic function: {func_key.function_name!r} in {func_key.filename}")
 
                 # Format the function key into display-friendly info
                 formatted = _format_function_key(function_key=func_key)
+
+                # Debug: Log if we get "()" after formatting
+                if formatted.display_name == "()":
+                    print(f"DEBUG: Got '()' display_name from:")
+                    print(f"  Raw function_name: {func_key.function_name!r}")
+                    print(f"  Filename: {func_key.filename}")
+                    print(f"  Line: {func_key.line}")
+                    continue
 
                 # Calculate percentages and per-call metrics
                 ncalls = func_stats.call_count
@@ -464,6 +637,7 @@ class LiveProfiler:
                         percall_tot=tottime / ncalls if ncalls > 0 else 0,
                         percall_cum=cumtime / ncalls if ncalls > 0 else 0,
                         percent=(cumtime / total_time * 100) if total_time > 0 else 0,
+                        debug_raw_name=func_key.function_name,  # Debug: show raw name
                     )
                 )
 
@@ -498,7 +672,10 @@ class LiveProfiler:
         return render_stats_html(render_input=render_input)
 
     def _display_stats(self, final: bool):
-        """Display the current profiling stats."""
+        """Display the current profiling stats.
+
+        Raises any exceptions to be caught by the calling thread's error handler.
+        """
         if self._widget_instance is None:
             return
 
@@ -506,6 +683,7 @@ class LiveProfiler:
         if self._is_complete and not final:
             return
 
+        # Get stats - let exceptions propagate to thread error handler
         stats_result = self._get_stats_data()
         html = self._render_html(stats_result=stats_result, final=final)
 

@@ -44,9 +44,8 @@ def _(np, time):
 
 @app.cell
 def _(cpu_intensive, io_simulation, memory_allocation, time):
-
     def mixed_workload():
-        for i in range(10):
+        for i in range(1000):
             if i % 3 == 0:
                 cpu_intensive()
             elif i % 3 == 1:
@@ -61,6 +60,16 @@ def _(cpu_intensive, io_simulation, memory_allocation, time):
 def _(marimo_profile, mixed_workload):
     with marimo_profile(refresh_interval=0.001, top_n=15):
         mixed_workload()
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _():
     return
 
 

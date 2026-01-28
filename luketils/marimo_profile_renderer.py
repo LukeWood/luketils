@@ -19,6 +19,7 @@ class StatsData:
     percall_tot: float
     percall_cum: float
     percent: float
+    debug_raw_name: str = ""  # For debugging - raw function name before formatting
 
 
 @dataclass
@@ -91,10 +92,16 @@ def _render_stat_row(stat: StatsData, index: int) -> str:
     line_display = stat.line if stat.line else "?"
     location = f"{stat.file}:{line_display}"
 
+    # Debug column - show raw name if available
+    debug_cell = ""
+    if stat.debug_raw_name:
+        debug_cell = f'<td style="padding: 8px 12px; color: #ef4444; font-family: \'Monaco\', \'Menlo\', monospace; font-size: 10px;" title="Raw: {stat.debug_raw_name}">{stat.debug_raw_name[:20]}</td>'
+
     return f"""
     <tr style="background: {bg_color};">
         <td style="padding: 8px 12px; color: {func_color}; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;" title="{stat.function}">{stat.function}</td>
         <td style="padding: 8px 12px; color: #9ca3af; font-family: 'Monaco', 'Menlo', monospace; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="{location}">{location}</td>
+        {debug_cell}
         <td style="padding: 8px 12px; text-align: right; color: #e5e7eb; font-family: 'Monaco', 'Menlo', monospace;">{stat.ncalls}</td>
         <td style="padding: 8px 12px; text-align: right; color: #e5e7eb; font-family: 'Monaco', 'Menlo', monospace;">{stat.tottime:.4f}</td>
         <td style="padding: 8px 12px; text-align: right; color: #e5e7eb; font-family: 'Monaco', 'Menlo', monospace;">{stat.percall_tot:.6f}</td>
@@ -141,6 +148,7 @@ def render_stats_html(render_input: RenderInput) -> str:
                     <tr style="background: linear-gradient(180deg, #374151 0%, #1f2937 100%); border-bottom: 2px solid {color};">
                         <th style="padding: 12px; text-align: left; color: #f3f4f6; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Function</th>
                         <th style="padding: 12px; text-align: left; color: #f3f4f6; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Location</th>
+                        <th style="padding: 12px; text-align: left; color: #ef4444; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Raw (DEBUG)</th>
                         <th style="padding: 12px; text-align: right; color: #f3f4f6; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Calls</th>
                         <th style="padding: 12px; text-align: right; color: #f3f4f6; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">TotTime</th>
                         <th style="padding: 12px; text-align: right; color: #f3f4f6; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Per Call</th>
