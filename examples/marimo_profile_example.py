@@ -39,9 +39,9 @@ def _(marimo_profile, np, time):
         matrix_operations()
 
     # Profile the code - the profiler automatically displays updates!
-    with marimo_profile(refresh_interval=0.5, top_n=15):
+    with marimo_profile(refresh_interval=0.5, top_n=100):
         # Run some expensive operations
-        for i in range(5550):
+        for i in range(50):
             nested_function()
             time.sleep(0.005)
     return

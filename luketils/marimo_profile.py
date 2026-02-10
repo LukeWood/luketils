@@ -269,6 +269,12 @@ def _format_function_key(function_key: FunctionKey) -> FormattedFunctionInfo:
     # Normalize the function name first (handles non-printable characters)
     normalized_name = _normalize_function_name(function_key.function_name)
 
+    # Debug: Track the transformation
+    if function_key.function_name == "" or normalized_name == "" or normalized_name == "<empty>":
+        print(f"DEBUG FORMAT: Transforming function name")
+        print(f"  Original: {function_key.function_name!r}")
+        print(f"  Normalized: {normalized_name!r}")
+
     # Detect class context if this is a real source file
     class_name = None
     if (
@@ -286,6 +292,14 @@ def _format_function_key(function_key: FunctionKey) -> FormattedFunctionInfo:
     display_name = _format_function_name(
         function_name=normalized_name, class_name=class_name
     )
+
+    # Debug: Check final result
+    if display_name == "()":
+        print(f"DEBUG FORMAT: Got '()' as display_name!")
+        print(f"  Original: {function_key.function_name!r}")
+        print(f"  Normalized: {normalized_name!r}")
+        print(f"  Class: {class_name!r}")
+        print(f"  Final: {display_name!r}")
 
     # Format the file path
     file_path = _format_file_path(filename=function_key.filename)
@@ -625,6 +639,18 @@ class LiveProfiler:
                 ncalls = func_stats.call_count
                 tottime = func_stats.total_time
                 cumtime = func_stats.cumulative_time
+
+                # Debug: Log RIGHT BEFORE adding to stats_data
+                if formatted.display_name == "()" or func_key.function_name == "" or not formatted.display_name.strip():
+                    print(f"\n{'='*60}")
+                    print(f"CRITICAL: About to add suspicious entry to stats_data!")
+                    print(f"  Raw func_key.function_name: {func_key.function_name!r}")
+                    print(f"  Raw func_key.filename: {func_key.filename!r}")
+                    print(f"  Raw func_key.line: {func_key.line!r}")
+                    print(f"  Formatted display_name: {formatted.display_name!r}")
+                    print(f"  Formatted file_path: {formatted.file_path!r}")
+                    print(f"  Formatted line_number: {formatted.line_number!r}")
+                    print(f"{'='*60}\n")
 
                 stats_data.append(
                     StatsData(
