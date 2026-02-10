@@ -27,6 +27,8 @@ dependencies = [
     "opencv-python",
     "scikit-learn",
     "frozendict>=2.4.7",
+    "polars",
+    "plotly",
 ]
 [project.optional-dependencies]
 dev = [
@@ -41,4 +43,3 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/lukewood/luketils"
-
