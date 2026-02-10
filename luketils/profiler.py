@@ -2,13 +2,23 @@ from __future__ import annotations
 
 from functools import wraps
 from time import perf_counter
-from typing import Callable, ParamSpec, TypeVar
+from typing import Callable, ParamSpec, Protocol, TypeVar, cast
 
 import polars as pl
 import plotly.express as px
 
 P = ParamSpec("P")
 R = TypeVar("R")
+
+
+class ProfiledCallable(Protocol[P, R]):
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> R: ...
+
+    def times(self) -> pl.DataFrame: ...
+
+    def plot_execution_times(self) -> px.Figure: ...
+
+    def histogram(self) -> px.Figure: ...
 
 
 def _times_df(runtimes: list[float]) -> pl.DataFrame:
@@ -39,12 +49,12 @@ def _histogram(df: pl.DataFrame) -> px.Figure:
     )
 
 
-def _rebuild_profiled(func: Callable[P, R]) -> Callable[P, R]:
+def _rebuild_profiled(func: Callable[P, R]) -> ProfiledCallable[P, R]:
     return profile()(func)
 
 
-def profile() -> Callable[[Callable[P, R]], Callable[P, R]]:
-    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+def profile() -> Callable[[Callable[P, R]], ProfiledCallable[P, R]]:
+    def decorator(func: Callable[P, R]) -> ProfiledCallable[P, R]:
         runtimes: list[float] = []
 
         @wraps(func)
@@ -75,6 +85,6 @@ def profile() -> Callable[[Callable[P, R]], Callable[P, R]]:
         wrapper.histogram = histogram  # type: ignore[attr-defined]
         wrapper.__reduce__ = __reduce__  # type: ignore[attr-defined]
 
-        return wrapper
+        return cast(ProfiledCallable[P, R], wrapper)
 
     return decorator
